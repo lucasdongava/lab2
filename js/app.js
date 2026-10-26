@@ -28,13 +28,14 @@ let toastT; function toast(msg) { const t = $('#toast'); t.textContent = msg; t.
 
 // ---------- sidebar ----------
 function renderSide() {
-  let h = `<div class="side-head"><div><b>Aulas</b><small>${done.size} de ${LESSONS.length} concluídas</small></div><button class="icon-btn" data-close aria-label="Fechar menu">✕</button></div><div class="nav-home"><button data-go="inicio" class="${view === 'inicio' ? 'on' : ''}">Início</button><button data-go="projetos" class="${view === 'projetos' ? 'on' : ''}">Projetos</button><button data-go="painel" class="${view === 'painel' ? 'on' : ''}">Progresso</button><button data-go="resumo" class="${view === 'resumo' ? 'on' : ''}">Resumo</button></div>`;
+  let h = `<div class="side-head"><div><b>Aulas</b><small>${done.size} de ${LESSONS.length} concluídas</small></div><button class="icon-btn" data-close aria-label="Fechar menu">✕</button></div><div class="nav-home"><button data-go="inicio" class="${view === 'inicio' ? 'on' : ''}">Início</button><button data-go="projetos" class="${view === 'projetos' ? 'on' : ''}">Projetos</button><button data-go="resumo" class="${view === 'resumo' ? 'on' : ''}">Resumo</button></div>`;
   for (const u of [0, 1, 2, 3]) {
     h += `<div class="unit"><div class="unit-h"><b style="background:${UNITS[u].color}">${u || '★'}</b>${UNITS[u].name}</div>`;
     for (const L of LESSONS.filter(l => l.unit === u))
       h += `<button style="--i:${LESSONS.indexOf(L) + 2}" class="lesson-btn ${view === L.id ? 'on' : ''} ${done.has(L.id) ? 'done' : ''}" data-go="${L.id}"><span class="dot">${done.has(L.id) ? '✓' : ''}</span>${esc(L.title)}</button>`;
     h += `</div>`;
   }
+  h += `<div class="nav-foot"><button data-go="painel" class="${view === 'painel' ? 'on' : ''}">Progresso</button></div>`;
   $('#side').innerHTML = h;
   if (justDone) { const b = $(`#side [data-go="${justDone}"]`); if (b) b.classList.add('just'); justDone = null; }
   placeSideInd();
