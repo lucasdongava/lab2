@@ -521,6 +521,16 @@ td{border-color:var(--line)}
   .ide{margin:0;left:250px;right:max(10px,env(safe-area-inset-right,0px));top:calc(66px + env(safe-area-inset-top,0px))}
   .side{margin-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 }
+/* computador: editor so aparece quando o usuario abre um exemplo ou clica em Codigo */
+.code-btn{display:none;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700}
+@media (min-width:1181px){
+  .code-btn{display:grid}
+  body.code .code-btn{background:var(--acc-s);color:var(--acc)}
+  .app{grid-template-columns:260px minmax(0,1fr)}
+  .ide{display:none}
+  body.code .app{grid-template-columns:260px minmax(0,1fr) minmax(0,46%)}
+  body.code .ide{display:flex}
+}
 
 /* botões: cantos arredondados (sem pílulas/círculos) */
 .btn,.vctl button,.vbtn,.nav-home button{border-radius:12px}

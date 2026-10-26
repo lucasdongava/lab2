@@ -151,7 +151,7 @@ function render(id, keepScroll) {
   if (L) { store.set('last', id); $('#lessonIn').querySelectorAll('pre[data-hl]').forEach(pre => { const [lid, k] = pre.dataset.hl.split('|'); const code = LESSONS.find(x => x.id === lid).codes[k]; if (window.CodeMirror && CodeMirror.runMode) CodeMirror.runMode(code, 'text/x-java', pre); else pre.textContent = code; }); }
   try { history.replaceState(null, '', '#' + id); } catch (e) {}
   if (!keepScroll) $('#lesson').scrollTop = 0;
-  renderSide(); setMode('lesson');
+  renderSide(); if (isNarrow()) setMode('lesson');
 }
 $('#lessonIn').addEventListener('click', e => {
   const t = e.target.closest('button'); if (!t) return;
@@ -240,6 +240,7 @@ function setMode(m) {
 if (window.ResizeObserver) { const ro = new ResizeObserver(placeInd); ['#tbLesson', '#tbCode'].forEach(s => ro.observe($(s))); }
 $('#tbLesson').onclick = () => setMode('lesson');
 $('#tbCode').onclick = () => setMode('code');
+$('#codeBtn').onclick = () => setMode(document.body.classList.contains('code') ? 'lesson' : 'code');
 
 // ---------- execução ----------
 const out = $('#out');
@@ -265,7 +266,7 @@ function run() {
   saveDraft(); clearErr();
   if (worker) { worker.terminate(); worker = null; }
   ioTab('out'); setOut('');
-  if (isNarrow()) setMode('code');
+  setMode('code');
   let js;
   try { js = JavaLite.transpile(ed.getValue()); }
   catch (e) {
