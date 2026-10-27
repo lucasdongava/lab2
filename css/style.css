@@ -526,6 +526,7 @@ td{border-color:var(--line)}
 }
 /* computador: editor so aparece quando o usuario abre um exemplo ou clica em Codigo */
 .code-btn{display:none;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700}
+.collapse-btn{display:none}
 @media (min-width:1181px){
   .code-btn{display:grid}
   body.code .code-btn{background:var(--acc-s);color:var(--acc)}
@@ -533,6 +534,11 @@ td{border-color:var(--line)}
   .ide{display:none}
   body.code .app{grid-template-columns:260px minmax(0,1fr) minmax(0,46%)}
   body.code .ide{display:flex}
+  /* botao recolhe/mostra a sidebar (so computador; no celular/tablet segue a gaveta) */
+  .collapse-btn{display:grid}
+  body.side-off .app{grid-template-columns:minmax(0,1fr)}
+  body.side-off.code .app{grid-template-columns:minmax(0,1fr) minmax(0,46%)}
+  body.side-off .side{display:none}
 }
 
 /* botões: cantos arredondados (sem pílulas/círculos) */

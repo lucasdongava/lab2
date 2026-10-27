@@ -51,6 +51,13 @@ $('.top-prog').setAttribute('role', 'button'); $('.top-prog').tabIndex = 0; $('.
 $('.top-prog').onclick = () => go('painel'); $('.top-prog').onkeydown = e => { if (e.key === 'Enter') go('painel'); };
 $('#menuBtn').onclick = () => { const o = $('#side').classList.toggle('open'); $('#scrim').classList.toggle('on', o); $('#menuBtn').setAttribute('aria-expanded', String(o)); if (o) { const on = $('#side .lesson-btn.on'); if (on) on.scrollIntoView({ block: 'center' }); } };
 $('#scrim').onclick = closeDrawer;
+// computador: recolher/mostrar a sidebar (lembra a escolha)
+(() => {
+  const btn = $('#collapseBtn');
+  const apply = off => { document.body.classList.toggle('side-off', off); btn.setAttribute('aria-expanded', String(!off)); btn.setAttribute('aria-label', off ? 'Mostrar menu lateral' : 'Recolher menu lateral'); };
+  apply(!!store.get('sideOff', false));
+  btn.onclick = () => { const off = !document.body.classList.contains('side-off'); apply(off); store.set('sideOff', off); };
+})();
 
 // ---------- páginas ----------
 function snippet(L, key) {
