@@ -536,10 +536,14 @@ td{border-color:var(--line)}
   body.code .ide{display:flex}
   /* botao recolhe/mostra a sidebar (so computador; no celular/tablet segue a gaveta) */
   .collapse-btn{display:grid}
-  body.side-off .app{grid-template-columns:minmax(0,1fr)}
-  body.side-off.code .app{grid-template-columns:minmax(0,1fr) minmax(0,46%)}
-  body.side-off .side{display:none}
+  /* mesma quantidade de colunas nos dois estados, para a largura poder animar */
+  .app{transition:grid-template-columns .6s cubic-bezier(.4,0,.2,1)}
+  .side{width:260px;justify-self:start;opacity:1;transform:none;transition:transform .6s cubic-bezier(.4,0,.2,1),opacity .45s ease .1s,visibility 0s}
+  body.side-off .app{grid-template-columns:0px minmax(0,1fr)}
+  body.side-off.code .app{grid-template-columns:0px minmax(0,1fr) minmax(0,46%)}
+  body.side-off .side{transform:translateX(calc(-100% - 24px));opacity:0;visibility:hidden;pointer-events:none;transition:transform .6s cubic-bezier(.4,0,.2,1),opacity .35s ease,visibility 0s linear .6s}
 }
+@media (min-width:1181px) and (prefers-reduced-motion:reduce){.app,.side{transition:none!important}}
 
 /* botões: cantos arredondados (sem pílulas/círculos) */
 .btn,.vctl button,.vbtn,.nav-home button{border-radius:12px}
