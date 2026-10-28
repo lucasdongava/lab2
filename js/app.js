@@ -46,6 +46,7 @@ function renderSide() {
   $('#progBar').style.width = (done.size / LESSONS.length * 100) + '%';
 }
 $('#side').addEventListener('click', e => { if (e.target.closest('[data-close]')) return closeDrawer(); const b = e.target.closest('[data-go]'); if (b) go(b.dataset.go); });
+$('#logoHome').addEventListener('click', e => { e.preventDefault(); closeDrawer(); go('inicio'); });
 addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
 (() => { let x0 = null; const sd = $('#side'); sd.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true }); sd.addEventListener('touchend', e => { if (x0 != null && e.changedTouches[0].clientX - x0 < -60) closeDrawer(); x0 = null; }, { passive: true }); })();
 const closeDrawer = () => { $('#side').classList.remove('open'); $('#scrim').classList.remove('on'); $('#menuBtn').setAttribute('aria-expanded', 'false'); };
