@@ -24,6 +24,8 @@ $('#themeBtn').onclick = () => {
   const nx = cur === 'dark' ? 'light' : 'dark'; const apply = () => { document.documentElement.dataset.theme = nx; }; store.set('tema', nx);
   if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.startViewTransition(apply); else apply();
 };
+// quando o site é exibido dentro da landing page, acompanha o tema dela (sem gravar a preferência)
+addEventListener('message', e => { const t = e.source === parent && e.data && e.data.estudosTema; if (t === 'light' || t === 'dark') { document.documentElement.dataset.theme = t;  } });
 
 // ---------- toast ----------
 let toastT; function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 1800); }
