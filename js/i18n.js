@@ -190,7 +190,10 @@ let LANG = 'pt';
 (() => {
   try {
     const q = new URLSearchParams(location.search).get('lang');
-    if (EMBEDDED && (q === 'pt' || q === 'en')) sessionStorage.setItem('thoth:lang-embed', q);
+    if (q === 'pt' || q === 'en') {   // a landing manda ?lang=: embutido vale so na sessao; numa aba nova vira a preferencia
+      if (EMBEDDED) sessionStorage.setItem('thoth:lang-embed', q); else localStorage.setItem('thoth:lang', q);
+      try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {}
+    }
     let v = EMBEDDED ? sessionStorage.getItem('thoth:lang-embed') : localStorage.getItem('thoth:lang');
     if (v !== 'pt' && v !== 'en') v = /^pt/i.test(navigator.language || '') ? 'pt' : 'en';
     LANG = v;
