@@ -983,7 +983,7 @@ const QUIZ = {
 };
 
 // roteiro para resolver qualquer exercício
-const METODO = `<div class="method">
+let METODO = `<div class="method">
   <div class="method-h"><b>Antes de programar, siga estes 4 passos</b><button class="btn" data-method>Ver exemplo</button></div>
   <ol class="steps"><li><b>Entenda</b> a entrada e a saída. Olhe o exemplo de execução do exercício.</li><li><b>Resolva à mão</b> com os números do exemplo, no papel.</li><li><b>Escreva em português</b> os passos que você fez (o algoritmo).</li><li><b>Traduza para Java</b>, execute com o exemplo e compare a saída.</li></ol>
   <div class="method-ex"><div>

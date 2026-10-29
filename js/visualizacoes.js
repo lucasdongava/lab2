@@ -44,11 +44,11 @@ function cellsHTML(arr, cls, under) { return `<div class="cells">${arr.map((v, i
 
 // player: avança/volta por quadros pré-calculados
 function player(el, build, draw, speed = 900) {
-  const ctl = add(el, `<div class="vctl"><div class="vprog"><i></i></div><button data-a="prev" aria-label="Voltar um passo">◀</button><button data-a="play" class="pri"></button><button data-a="next">Próximo ▸</button><button data-a="reset" aria-label="Recomeçar">↺</button><span class="vstep"></span></div>`);
+  const ctl = add(el, `<div class="vctl"><div class="vprog"><i></i></div><button data-a="prev" aria-label="${T('pvPrevAria')}">◀</button><button data-a="play" class="pri"></button><button data-a="next">${T('pvNext')}</button><button data-a="reset" aria-label="${T('pvResetAria')}">↺</button><span class="vstep"></span></div>`);
   let F = build(), i = 0, t = null;
   const B = k => ctl.querySelector(`[data-a=${k}]`);
   const stop = () => { clearInterval(t); t = null; };
-  const show = () => { draw(F[i], i, F); ctl.querySelector('.vstep').textContent = `passo ${i + 1} de ${F.length}`; ctl.querySelector('.vprog i').style.transform = `scaleX(${(i + 1) / F.length})`; el.classList.toggle('playing', !!t); B('prev').disabled = !i; B('next').disabled = i >= F.length - 1; B('play').textContent = t ? '⏸ Pausar' : i >= F.length - 1 ? '↺ De novo' : '▶ Animar'; };
+  const show = () => { draw(F[i], i, F); ctl.querySelector('.vstep').textContent = T('pvStep', i + 1, F.length); ctl.querySelector('.vprog i').style.transform = `scaleX(${(i + 1) / F.length})`; el.classList.toggle('playing', !!t); B('prev').disabled = !i; B('next').disabled = i >= F.length - 1; B('play').textContent = t ? T('pvPause') : i >= F.length - 1 ? T('pvAgain') : T('pvPlay'); };
   ctl.onclick = e => {
     const a = e.target.closest('button')?.dataset.a; if (!a) return;
     if (a === 'prev') { stop(); i = Math.max(0, i - 1); }

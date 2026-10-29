@@ -4,7 +4,8 @@
  */
 // ================= JAVA → JS (subconjunto da disciplina) =================
 const JavaLite = (() => {
-  class CErr extends Error { constructor(msg, line) { super(msg); this.line = line; } }
+  const TR = (...a) => T(...a);   // alias: algumas funcoes abaixo declaram uma variavel local chamada T
+  class CErr extends Error { constructor(msg, line, cat) { super(msg); this.line = line; this.cat = cat; } }
   const isId = c => !!c && /[A-Za-z0-9_$]/.test(c);
   const lineAt = (s, i) => s.slice(0, i).split('\n').length;
   const onlyNL = t => t.replace(/[^\n]/g, '');
@@ -21,7 +22,7 @@ const JavaLite = (() => {
       if (c === '"' || c === "'") {
         let j = i + 1;
         while (j < n && src[j] !== c && src[j] !== '\n') { if (src[j] === '\\') j++; j++; }
-        if (src[j] !== c) throw new CErr(c === '"' ? 'String não fechada — falta a aspa dupla "' : "char não fechado — falta a aspa simples '", lineAt(src, i));
+        if (src[j] !== c) throw new CErr(c === '"' ? T('cStr') : T('cChar'), lineAt(src, i), 'sintaxe');
         const body = src.slice(i + 1, j);
         lits.push(c === '"' ? '"' + body + '"' : '"' + body.replace(/"/g, '\\"') + '"');
         out += `__L${lits.length - 1}__`; i = j + 1; continue;
@@ -42,14 +43,14 @@ const JavaLite = (() => {
     for (let i = 0; i < code.length; i++) {
       const c = code[i];
       if (c === '\n') { ctx[line] = { init: st.length && st[st.length - 1].t === 'init', paren: pd > 0 }; line++; continue; }
-      if (c === '(') pd++; else if (c === ')') { pd--; if (pd < 0) throw new CErr("')' sobrando", line); }
+      if (c === '(') pd++; else if (c === ')') { pd--; if (pd < 0) throw new CErr(TR('cParenExtra'), line, 'chave'); }
       else if (c === '{') { const t = (prevSig === '=' || prevSig === ']' || (prevSig === ',' || prevSig === '{') && st.length && st[st.length - 1].t === 'init') ? 'init' : 'block'; st.push({ t, line }); }
-      else if (c === '}') { if (!st.length) throw new CErr("'}' sobrando — chave fechada sem ter sido aberta", line); st.pop(); }
+      else if (c === '}') { if (!st.length) throw new CErr(TR('cBraceExtra'), line, 'chave'); st.pop(); }
       if (!/\s/.test(c)) prevSig = c;
     }
     ctx[line] = { init: false, paren: pd > 0 };
-    if (st.length) throw new CErr(`fim do arquivo com ${st.length} chave(s) '{' sem fechar — falta '}'. Confira se cada if/for/método tem seu '}'.`, line);
-    if (pd > 0) throw new CErr("falta fechar um parêntese '('", line);
+    if (st.length) throw new CErr(TR('cEof', st.length), line, 'chave');
+    if (pd > 0) throw new CErr(TR('cParenMissing'), line, 'chave');
     for (let k = 0; k < lines.length; k++) {
       const t = lines[k].trim(); if (!t) continue;
       const c = ctx[k + 1] || {}; if (c.init || c.paren) continue;
@@ -59,7 +60,7 @@ const JavaLite = (() => {
         let nx = ''; for (let m = k + 1; m < lines.length; m++) { if (lines[m].trim()) { nx = lines[m].trim(); break; } }
         if (/^[.+\-*\/%&|?:)\]{]/.test(nx) && !/^(\+\+|--)/.test(nx)) continue;
         if (/\)$/.test(t) && /^[A-Za-z_][\w<>\[\],\s]*\s+[A-Za-z_]\w*\s*\(.*\)$/.test(t)) continue; // assinatura de método sem {
-        throw new CErr("';' esperado no fim desta linha", k + 1);
+        throw new CErr(TR('cSemi'), k + 1, 'semi');
       }
     }
   }
@@ -72,12 +73,12 @@ const JavaLite = (() => {
 
     // classes
     const classes = [...code.matchAll(/\b(?:enum|interface|record|class)\s+([A-Za-z_]\w*)/g)];
-    if (!classes.length) throw new CErr('Não encontrei a classe. Comece com: public class Main {', 1);
-    if (classes.length > 1) throw new CErr(`Este editor roda programas de uma classe só (com métodos static). Encontrei ${classes.length}: ${classes.map(c => c[1]).join(', ')}. Para classes/objetos, use o botão ↗ OnlineGDB.`, lineAt(code, classes[1].index));
+    if (!classes.length) throw new CErr(TR('cNoClass'), 1, 'classe');
+    if (classes.length > 1) throw new CErr(TR('cManyClasses', classes.length, classes.map(c => c[1]).join(', ')), lineAt(code, classes[1].index), 'classe');
     const mainClass = classes[0][1];
-    if (!/\bstatic\s+void\s+main\s*\(/.test(code)) throw new CErr('Falta o método main: public static void main(String[] args) { ... }', 1);
+    if (!/\bstatic\s+void\s+main\s*\(/.test(code)) throw new CErr(TR('cNoMain'), 1, 'sintaxe');
     if (/\bnew\s+[A-Z]\w*\s*\(/.test(code.replace(/\bnew\s+(Scanner|Random|StringBuilder|ArrayList|LinkedList|HashMap|HashSet|TreeMap|Integer|Double|String|int|double)\b/g, '')) && new RegExp('\\bnew\\s+' + mainClass + '\\s*\\(').test(code))
-      throw new CErr('Criar objetos (new ' + mainClass + '()) não é suportado aqui. Use métodos static ou rode no OnlineGDB.', 1);
+      throw new CErr(TR('cNewMain', mainClass), 1, 'sintaxe');
 
     // 3) divisão inteira: coleta declarações com tipo
     const decls = [], intM = new Set(['__idiv']), dblM = new Set(['__dbl']), rets = Object.create(null);
